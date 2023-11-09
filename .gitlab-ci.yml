@@ -1,0 +1,47 @@
+stages:
+  - "build"
+  - "test"
+  - "deploy"
+
+
+build:
+  stage: build
+  services:
+    - docker:dind
+  tags:
+    - bootcamp
+    - ir
+  image: docker:stable
+  script:
+    - mkdir -p ~/.docker && cat "$DOCKER_AUTH_CONFIG" > ~/.docker/config.json
+    - docker build --platform=linux/amd64 -t bootguard:latest -t registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA} .
+    - docker push registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA}
+
+test:
+  stage: test
+  tags:
+    - bootcamp
+    - ir
+  services:
+    - docker:dind
+  image: docker:stable
+  script:
+    - mkdir -p ~/.docker && cat "$DOCKER_AUTH_CONFIG" > ~/.docker/config.json
+    - docker pull registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA}
+    - docker run registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA} python /app/manage.py test
+
+
+
+deploy:
+  stage: deploy
+  image: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+  tags:
+    - bootcamp
+    - ir
+  only:
+    refs:
+      - main
+  script:
+    - darkube deploy --token ${DEPLOY_TOKEN_CHATBOT}
+      --app-id ${APP_ID_CHATBOT} --image-tag
+      ${CI_COMMIT_SHORT_SHA}
