@@ -15,3 +15,7 @@ class Chatbot(models.Model):
     custom_prompt = models.TextField(blank=True)
     chatbot_picture = models.ImageField(blank=True, upload_to=chatbot_image_path)
 
+
+class Content(models.Model):
+    content = models.CharField(max_length=800)
+    chatbot = models.ForeignKey(Chatbot, on_delete=models.CASCADE, related_name='contents')
