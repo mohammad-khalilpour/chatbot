@@ -9,3 +9,10 @@ class Conversation(models.Model):
 
     class Meta:
         unique_together = ('user', 'chatbot')
+
+
+class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    is_chatbot_message = models.BooleanField()
+    message_context = models.TextField()
+    like = models.BooleanField(null=True, default=None)
