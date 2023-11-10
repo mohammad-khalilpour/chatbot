@@ -11,7 +11,7 @@ def chatbot_image_path(instance, filename):
 
 class Chatbot(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=500, blank=True)
+    description = models.TextField(blank=True)
     custom_prompt = models.TextField(blank=True)
     chatbot_picture = models.ImageField(blank=True, upload_to=chatbot_image_path)
 
