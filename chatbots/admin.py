@@ -1,3 +1,5 @@
 from django.contrib import admin
+from chatbots.models import Chatbot, Content
 
-# Register your models here.
+admin.site.register(Chatbot)
+admin.site.register(Content)
