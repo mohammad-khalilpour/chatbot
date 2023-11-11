@@ -12,9 +12,12 @@ def register(request):
         register_form = RegistrationForm(request.POST)
 
         if register_form.is_valid():
-            user = User(register_form.save())
-            user.set_password(user.password)
-            user.create()
+            email = register_form.cleaned_data['email']
+            password = register_form.cleaned_data['password1']
+
+            user = User.objects.create_user(email=email, password=password)
+            user.set_password(password)
+            user.save()
 
     return render(request, 'register.html', {'form': register_form})
 
