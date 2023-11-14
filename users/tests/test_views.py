@@ -14,7 +14,7 @@ class RegisterViewTests(TestCase):
             'password2': 'TestPassword123',
         }
         response = self.client.post(reverse('register'), data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_registration_with_different_passwords(self):
         data = {
