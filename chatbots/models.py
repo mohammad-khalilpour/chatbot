@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 import os
 
 
@@ -11,9 +12,16 @@ def chatbot_image_path(instance, filename):
 
 class Chatbot(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
     description = models.TextField(blank=True)
     custom_prompt = models.TextField(blank=True)
     chatbot_picture = models.ImageField(blank=True, upload_to=chatbot_image_path)
+
+    def __str__(self):
+        return self.name
 
 
 class Content(models.Model):
