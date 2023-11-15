@@ -24,25 +24,28 @@
         </div>
         <!-- List of Previous Chats -->
         <ul class="chat-list">
-            <li class="chat-item border rounded p-2 mb-4 hover:bg-gray-100">
+            {% for chat in chat_list %}
+                <li class="chat-item border rounded p-2 mb-4 hover:bg-gray-100">
                 <a href="chat-details.html" class="chat-link flex items-center">
                     <div class="chat-avatar" style="width:60px;height:60px;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User 1">
+                        <img src="{{ chat.chatbot.chatbot_picture.url }}" alt="{{ chat.chatbot.name }}">
                     </div>
                     <div class="chat-details">
-                        <h3 class="chat-title">ChatBot name</h3>
-                        <p class="chat-preview">chat title</p>
-                        <p class="chat-date">date of last message: </p>
+                        <h3 class="chat-title">{{ chat.chatbot.name }}</h3>
+                        <p class="chat-preview">{{ chat.title }}</p>
+                        <p class="chat-date">date of last message: {{ chat.last_message_date }}</p>
                     </div>
                 </a>
             </li>
+            {% endfor %}
             <!-- Add more chat items here with the same added styles -->
         </ul>
         <!-- Pagination -->
         <div class="pagination flex space-x-2">
             <ul>
-                <li><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
+                {% for i in chat_list.count %}
+                    <li><a href="{{ chat_list }}?page={{ i }}">1</a></li>
+                {% endfor %}
                 <!-- Add more pages as needed -->
             </ul>
         </div>

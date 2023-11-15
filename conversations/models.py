@@ -6,6 +6,8 @@ from chatbots.models import Chatbot
 class Conversation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     chatbot = models.ForeignKey(Chatbot, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200, null=True, blank=True)
+    last_message_date = models.DateField(auto_now=True)
 
     class Meta:
         unique_together = ('user', 'chatbot')
