@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from chatbots.models import Chatbot
+from datetime import datetime
 
 
 class Conversation(models.Model):
@@ -10,7 +11,11 @@ class Conversation(models.Model):
     last_message_date = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['last_message_date']
+        ordering = ['-last_message_date']
+
+    def update_datetime_field_to_now(self):
+        self.last_message_date = datetime.now()
+        self.save()
 
 
 class Message(models.Model):
