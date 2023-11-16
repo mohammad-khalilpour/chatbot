@@ -4,6 +4,9 @@ from chatbots.models import Chatbot
 from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger
+from openai import OpenAI
+from django.conf import settings
+import json
 
 
 @login_required
@@ -43,7 +46,24 @@ def chat_detail_view(request):
 
     if request.method == 'POST':
         message_context = request.POST.get('message')
-        Message.objects.create(conversation=conversation, message_context=message_context,is_chatbot_message=False).save()
+        Message.objects.create(conversation=conversation, message_context=message_context, is_chatbot_message=False).save()
+        client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
+        req_messages = [{"role": "system", "content": conversation.chatbot.custom_prompt},]
+        messages = Message.objects.filter(conversation=conversation)
+        for message in messages:
+            if message.is_chatbot_message:
+                role = 'assistant'
+            else:
+                role = 'user'
+
+            req_messages.append({'role': role, 'content': message.message_context})
+
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=req_messages
+        )
+        completion = json.loads(completion)
+        Message.objects.create(conversation=conversation, message_context=completion['choices'][0]['message']['content'], is_chatbot_message=True).save()
 
     messages = Message.objects.filter(conversation=conversation)
     context = {'conversation_id': conversation_id, 'messages': messages}
