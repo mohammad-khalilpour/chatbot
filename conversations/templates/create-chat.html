@@ -11,7 +11,7 @@
     <!-- Header -->
     <header class="bg-gray-800 text-white p-4">
         <div class="container mx-auto">
-            <a href="chat-list.html" class="block text-2xl font-semibold text-white mb-4">
+            <a href="{% url 'chat_list' %}" class="block text-2xl font-semibold text-white mb-4">
                 Back to Chat History
             </a>
         </div>
@@ -20,15 +20,17 @@
     <div class="container mx-auto p-4 mt-4">
         <ul class="contact-list">
             <li class="contact-item border rounded p-2 mb-2 hover:bg-gray-100">
-                <div class="contact-link cursor-pointer flex items-center" onClick="">
-                    <div class="contact-avatar" style="width:60px;height:60px;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User 1">
+                {% for chatbot in chatbot_list %}
+                    <div class="contact-link cursor-pointer flex items-center" onClick="">
+                        <div class="contact-avatar" style="width:60px;height:60px;">
+                        <img src="{{ chatbot.chatbot_picture.url }}" alt="{{ chatbot.name }}">
+                        </div>
+                        <div class="contact-details">
+                            <h3 class="contact-name">{{ chatbot.name }}</h3>
+                            <p class="contact-desc">{{ chatbot.description }}</p>
+                        </div>
                     </div>
-                    <div class="contact-details">
-                        <h3 class="contact-name">User 1</h3>
-                        <p class="contact-desc">description</p>
-                    </div>
-                </div>
+                {% endfor %}
             </li>
         </ul>
     </div>

@@ -19,5 +19,17 @@ def chat_list_view(request):
         chat_list = paginator.page(page)
     except PageNotAnInteger:
         chat_list = paginator.page(1)
-    context = {'chat_list': chat_list}
+    context = {'chat_list': chat_list, 'page_count': range(1, int(queryset.count() / 10) + 2)}
     return render(request, 'chat-list.html', context)
+
+
+@login_required
+def create_chat_view(request):
+    chatbots = Chatbot.objects.all()
+
+    context = {'chatbot_list': chatbots}
+
+    if request.method == 'POST':
+        pass
+
+    return render(request, 'create-chat.html', context)

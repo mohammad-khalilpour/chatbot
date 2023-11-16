@@ -43,8 +43,8 @@
         <!-- Pagination -->
         <div class="pagination flex space-x-2">
             <ul>
-                {% for i in chat_list.count %}
-                    <li><a href="{{ chat_list }}?page={{ i }}">1</a></li>
+                {% for i in page_count %}
+                    <li><a href="{% url 'chat_list' %}?page={{ i }}">{{ i }}</a></li>
                 {% endfor %}
                 <!-- Add more pages as needed -->
             </ul>
@@ -52,7 +52,7 @@
     </div>
     <footer>
         <div class="container mx-auto">
-            <a href="create-chat.html" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Create New Chat</a>
+            <a href="{% url 'create_chat' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Create New Chat</a>
         </div>
     </footer>
 </body>
