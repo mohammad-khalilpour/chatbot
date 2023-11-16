@@ -46,6 +46,7 @@
         const data = `chatbot_name=${chatbot_name}`;
         xhr.send(data);
 
+        window.location.replace("{% url 'chat_list' %}");
     }
 </script>
 </html>
