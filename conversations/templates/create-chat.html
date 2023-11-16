@@ -46,7 +46,16 @@
         const data = `chatbot_name=${chatbot_name}`;
         xhr.send(data);
 
-        window.location.replace("{% url 'chat_list' %}");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                window.location.replace("{% url 'chat_list' %}");
+              } else {
+
+              }
+            }
+      };
+
     }
 </script>
 </html>

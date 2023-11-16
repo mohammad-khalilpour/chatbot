@@ -45,40 +45,65 @@ def chat_detail_view(request):
     conversation = Conversation.objects.get(id=conversation_id)
 
     if request.method == 'POST':
-        message_context = request.POST.get('message')
-        Message.objects.create(conversation=conversation, message_context=message_context, is_chatbot_message=False).save()
-        client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
-        messages = Message.objects.filter(conversation=conversation)
-        if not conversation.title:
-            title = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                max_tokens=10,
-                messages=[
-                    {'role': 'system', 'content': 'Create a title for the following message'},
-                    {'role': 'user', 'content': messages[0].message_context}
-                ]
-            )
-            title = json.loads(title)
-            conversation.title = title['choices'][0]['message']['content']
-            conversation.save()
-        req_messages = [{"role": "system", "content": conversation.chatbot.custom_prompt},]
-        for message in messages:
-            if message.is_chatbot_message:
-                role = 'assistant'
-            else:
-                role = 'user'
+        react = request.POST.get('react')
+        if react:
+            message = Message.objects.filter(conversation=conversation).last()
+            if react == 'like':
+                message.like = True
+                message.save()
+                conversation.like_count += 1
+                conversation.save()
+            elif react == 'dislike':
+                message.like = False
+                message.save()
+                open_ai_api_chat_completion(conversation_id, reproduce=True)
+                conversation.dislike_count += 1
+                conversation.save()
 
-            req_messages.append({'role': role, 'content': message.message_context})
-
-        completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=req_messages
-        )
-        completion = json.loads(completion)
-        Message.objects.create(conversation=conversation, message_context=completion['choices'][0]['message']['content'], is_chatbot_message=True).save()
-        conversation.update_datetime_field_to_now()
+        else:
+            message_context = request.POST.get('message')
+            Message.objects.create(conversation=conversation, message_context=message_context, is_chatbot_message=False).save()
+            open_ai_api_chat_completion(conversation_id)
 
     messages = Message.objects.filter(conversation=conversation)
     context = {'conversation_id': conversation_id, 'messages': messages}
 
     return render(request, 'chat-details.html', context)
+
+
+def open_ai_api_chat_completion(conversation_id, reproduce=False):
+    conversation = Conversation.objects.get(id=conversation_id)
+    client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
+    messages = Message.objects.filter(conversation=conversation)
+    if not conversation.title:
+        title = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            max_tokens=10,
+            messages=[
+                {'role': 'system', 'content': 'Create a title for the following message'},
+                {'role': 'user', 'content': messages[0].message_context}
+            ]
+        )
+        title = json.loads(title)
+        conversation.title = title['choices'][0]['message']['content']
+        conversation.save()
+    req_messages = [{"role": "system", "content": conversation.chatbot.custom_prompt}, ]
+    for message in messages:
+        if message.is_chatbot_message:
+            role = 'assistant'
+        else:
+            role = 'user'
+
+        req_messages.append({'role': role, 'content': message.message_context})
+    if reproduce:
+        req_messages.pop()
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=req_messages
+    )
+    completion = json.loads(completion)
+    if reproduce:
+        Message.objects.filter(conversation=conversation).last().delete()
+    Message.objects.create(conversation=conversation, message_context=completion['choices'][0]['message']['content'],
+                           is_chatbot_message=True).save()
+    conversation.update_datetime_field_to_now()

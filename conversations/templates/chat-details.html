@@ -24,8 +24,10 @@
                 {% for message in messages %}
                     {% if message.is_chatbot_message %}
                         <div class="message received flex items-center mb-2  border rounded p-2 mb-4 hover:bg-gray-100">
-                            <button class="btn-like">👍</button>
-                            <button class="btn-dislike">👎</button>
+                            {% if forloop.last %}
+                            <button class="btn-like" onclick="react('like')">👍</button>
+                            <button class="btn-dislike" onclick="react('dislike')">👎</button>
+                            {% endif %}
                             <div class="message-content ml-2">{{ message.message_context }}</div>
                         </div>
                     {% else %}
@@ -54,6 +56,26 @@
         xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         const data = `message=${message_context}`;
+        xhr.send(data);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                location.reload();
+              } else {
+
+              }
+            }
+      };
+    }
+
+    function react(react) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "{% url 'chat_detail' %}?conversation={{ conversation_id }}", true);
+
+        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        const data = `react=${react}`;
         xhr.send(data);
 
         xhr.onreadystatechange = function() {
