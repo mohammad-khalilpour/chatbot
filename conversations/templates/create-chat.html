@@ -21,7 +21,7 @@
         <ul class="contact-list">
             <li class="contact-item border rounded p-2 mb-2 hover:bg-gray-100">
                 {% for chatbot in chatbot_list %}
-                    <div class="contact-link cursor-pointer flex items-center" onClick="">
+                    <div class="contact-link cursor-pointer flex items-center" onClick="createConversation('{{ chatbot.name }}')">
                         <div class="contact-avatar" style="width:60px;height:60px;">
                         <img src="{{ chatbot.chatbot_picture.url }}" alt="{{ chatbot.name }}">
                         </div>
@@ -34,5 +34,18 @@
             </li>
         </ul>
     </div>
+
 </body>
+<script>
+    function createConversation(chatbot_name) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "{% url 'create_chat' %}", true);
+
+        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        const data = `chatbot_name=${chatbot_name}`;
+        xhr.send(data);
+
+    }
+</script>
 </html>

@@ -30,6 +30,8 @@ def create_chat_view(request):
     context = {'chatbot_list': chatbots}
 
     if request.method == 'POST':
-        pass
+        chatbot_name = request.POST.get('chatbot_name')
+        chatbot = Chatbot.objects.get(name=chatbot_name)
+        Conversation.objects.create(chatbot=chatbot, user=request.user, title='').save()
 
     return render(request, 'create-chat.html', context)
