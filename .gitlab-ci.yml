@@ -14,7 +14,7 @@ build:
   image: docker:stable
   script:
     - mkdir -p ~/.docker && cat "$DOCKER_AUTH_CONFIG" > ~/.docker/config.json
-    - docker build --platform=linux/amd64 -t bootguard:latest -t registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA} .
+    - docker build --platform=linux/amd64 -t chatbot:latest -t registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA} .
     - docker push registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA}
 
 test:
