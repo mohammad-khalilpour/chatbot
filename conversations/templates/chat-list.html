@@ -28,7 +28,11 @@
                 <li class="chat-item border rounded p-2 mb-4 hover:bg-gray-100">
                 <a href="{% url 'chat_detail' %}?conversation={{ chat.id }}" class="chat-link flex items-center">
                     <div class="chat-avatar" style="width:60px;height:60px;">
-                        <img src="{{ chat.chatbot.chatbot_picture.url }}" alt="{{ chat.chatbot.name }}">
+                        {% if chat.chatbot.chatbot_picture %}
+                            <img src="{{ chat.chatbot.chatbot_picture.url }}" alt="{{ chat.chatbot.name }}">
+                        {% else %}
+                            <img src="" alt="{{ chat.chatbot.name }}">
+                        {% endif %}
                     </div>
                     <div class="chat-details">
                         <h3 class="chat-title">chatbot name: {{ chat.chatbot.name }}</h3>

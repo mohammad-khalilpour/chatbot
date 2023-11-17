@@ -23,7 +23,11 @@
                 {% for chatbot in chatbot_list %}
                     <div class="contact-link cursor-pointer flex items-center" onClick="createConversation('{{ chatbot.name }}')">
                         <div class="contact-avatar" style="width:60px;height:60px;">
-                        <img src="{{ chatbot.chatbot_picture.url }}" alt="{{ chatbot.name }}">
+                            {% if chat.chatbot.chatbot_picture %}
+                            <img src="{{ chatbot.chatbot_picture.url }}" alt="{{ chatbot.name }}">
+                        {% else %}
+                            <img src="" alt="{{ chatbot.name }}">
+                        {% endif %}
                         </div>
                         <div class="contact-details">
                             <h3 class="contact-name">{{ chatbot.name }}</h3>
