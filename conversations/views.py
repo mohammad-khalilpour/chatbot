@@ -40,6 +40,7 @@ def create_chat_view(request):
     return render(request, 'create-chat.html', context)
 
 
+@login_required
 def chat_detail_view(request):
     conversation_id = request.GET.get('conversation')
     conversation = Conversation.objects.get(id=conversation_id)
