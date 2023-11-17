@@ -53,7 +53,7 @@ class UserLoginTests(TestCase):
     def test_successful_login(self):
         response = self.client.post(reverse('login'), self.user_data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, 'https://torob.com/', fetch_redirect_response=False)
+        self.assertRedirects(response, reverse('chat_list'))
 
     def test_inactive_user_login(self):
         # Deactivate the user

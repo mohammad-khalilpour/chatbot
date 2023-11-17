@@ -6,6 +6,9 @@ User = get_user_model()
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('chat_list')
+
     register_form = RegistrationForm()
 
     if request.method == "POST":
@@ -28,7 +31,9 @@ def user_login(request):
         login_form = LoginForm(request, data=request.POST)
 
         if login_form.is_valid():
-            return redirect('https://torob.com/')
+            user = login_form.get_user()
+            login(request, user)
+            return redirect('chat_list')
 
     return render(request, 'login.html')
 
