@@ -28,7 +28,7 @@ test:
   script:
     - mkdir -p ~/.docker && cat "$DOCKER_AUTH_CONFIG" > ~/.docker/config.json
     - docker pull registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA}
-    - docker run registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA} python /manage.py test
+    - docker run registry.hamdocker.ir/torob-bootcamp-1402/mohammad-khalilpour-chatbot:${CI_COMMIT_SHORT_SHA} python /app/manage.py test
 
 
 
