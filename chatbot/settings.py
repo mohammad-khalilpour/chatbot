@@ -38,7 +38,13 @@ ALLOWED_HOSTS.extend(
     )
 )
 
-
+CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS.extend(
+    filter(
+        None,
+        os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(','),
+    )
+)
 
 # Application definition
 
