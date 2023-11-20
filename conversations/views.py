@@ -28,7 +28,7 @@ def chat_list_view(request):
 
 @login_required
 def create_chat_view(request):
-    chatbots = Chatbot.objects.all()
+    chatbots = Chatbot.objects.filter(is_disabled=False)
 
     context = {'chatbot_list': chatbots}
 
@@ -45,21 +45,22 @@ def chat_detail_view(request):
     conversation_id = request.GET.get('conversation')
     conversation = Conversation.objects.get(id=conversation_id)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and not conversation.chatbot.is_disabled:
         react = request.POST.get('react')
         if react:
             message = Message.objects.filter(conversation=conversation).last()
+            chatbot = conversation.chatbot
             if react == 'like':
                 message.like = True
                 message.save()
-                conversation.like_count += 1
-                conversation.save()
+                chatbot.like_count += 1
+                chatbot.save()
             elif react == 'dislike':
                 message.like = False
                 message.save()
                 open_ai_api_chat_completion(conversation_id, reproduce=True)
-                conversation.dislike_count += 1
-                conversation.save()
+                chatbot.dislike_count += 1
+                chatbot.save()
 
         else:
             message_context = request.POST.get('message')
@@ -67,7 +68,7 @@ def chat_detail_view(request):
             open_ai_api_chat_completion(conversation_id)
 
     messages = Message.objects.filter(conversation=conversation)
-    context = {'conversation_id': conversation_id, 'messages': messages}
+    context = {'conversation_id': conversation_id, 'is_disabled': conversation.chatbot.is_disabled, 'messages': messages}
 
     return render(request, 'chat-details.html', context)
 

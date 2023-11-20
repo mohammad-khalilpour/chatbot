@@ -10,8 +10,6 @@ class Conversation(models.Model):
     chatbot = models.ForeignKey(Chatbot, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, blank=True)
     last_message_date = models.DateTimeField(auto_now=True)
-    like_count = models.BigIntegerField(default=0)
-    dislike_count = models.BigIntegerField(default=0)
 
     class Meta:
         ordering = ['-last_message_date']

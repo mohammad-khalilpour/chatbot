@@ -40,10 +40,12 @@
                 <!-- Add more chat messages as needed -->
             </div>
             <!-- Message Input -->
+            {% if not is_disabled %}
             <div class="message-input flex items-center">
                 <input type="text" id="message_input" placeholder="Type your message" class="flex-1 border rounded py-2 px-3 mr-2">
                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded" onclick="sendMessage(document.getElementById('message_input').value)">Send</button>
             </div>
+            {% endif %}
         </div>
     </div>
 </body>
