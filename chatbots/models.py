@@ -19,6 +19,9 @@ class Chatbot(models.Model):
     description = models.TextField(blank=True)
     custom_prompt = models.TextField(blank=True)
     chatbot_picture = models.ImageField(blank=True, upload_to=chatbot_image_path)
+    is_disabled = models.BooleanField(default=False)
+    like_count = models.BigIntegerField(default=0)
+    dislike_count = models.BigIntegerField(default=0)
 
     def __str__(self):
         return self.name
