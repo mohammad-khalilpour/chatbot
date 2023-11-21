@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from pgvector.django import VectorField
 import os
 
 
@@ -30,3 +31,4 @@ class Chatbot(models.Model):
 class Content(models.Model):
     content = models.CharField(max_length=800)
     chatbot = models.ForeignKey(Chatbot, on_delete=models.CASCADE, related_name='contents')
+    embedding = VectorField(dimensions=1536, blank=True, null=True)
