@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 from chatbots.models import Chatbot
 from datetime import datetime
+from django.contrib.postgres.search import SearchVector
 import pytz
 
 
