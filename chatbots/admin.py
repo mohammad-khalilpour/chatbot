@@ -72,7 +72,7 @@ class ContentAdmin(admin.ModelAdmin):
             model='text-embedding-ada-002',
             encoding_format='float'
         )
-        response = json.loads(response)
+        response = json.loads(response) if isinstance(response, str) else json.loads(response.model_dump_json())
         obj.embedding = response['data'][0]['embedding']
         super().save_model(request, obj, form, change)
 
