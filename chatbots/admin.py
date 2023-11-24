@@ -1,6 +1,9 @@
 from django.contrib import admin
 from chatbots.models import Chatbot, Content
 from django.contrib.auth import get_user_model
+from openai import OpenAI
+from django.conf import settings
+import json
 
 User = get_user_model()
 
@@ -46,6 +49,7 @@ class ChatbotAdmin(admin.ModelAdmin):
 @admin.register(Content)
 class ContentAdmin(admin.ModelAdmin):
     list_display = ('content',)
+    readonly_fields = ('embedding', )
 
     def get_queryset(self, request):
         chatbot_list = []
@@ -60,6 +64,17 @@ class ContentAdmin(admin.ModelAdmin):
         if request.user.is_chatbot_creator:
             form.base_fields['chatbot'].queryset = Chatbot.objects.filter(user=request.user)
         return form
+
+    def save_model(self, request, obj, form, change):
+        client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
+        response = client.embeddings.create(
+            input=request.POST.get('content'),
+            model='text-embedding-ada-002',
+            encoding_format='float'
+        )
+        response = json.loads(response) if isinstance(response, str) else json.loads(response.model_dump_json())
+        obj.embedding = response['data'][0]['embedding']
+        super().save_model(request, obj, form, change)
 
     def has_view_permission(self, request, obj=None):
         return True

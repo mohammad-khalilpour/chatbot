@@ -18,8 +18,8 @@
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">Your Chats</h2>
             <div class="search-box">
-                <input type="text" placeholder="Search chats" class="p-2 border rounded">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">Search</button>
+                <input type="text" id="search-text" placeholder="Search chats" class="p-2 border rounded">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded" onclick="search(document.getElementById('search-text').value)">Search</button>
             </div>
         </div>
         <!-- List of Previous Chats -->
@@ -60,5 +60,26 @@
         </div>
     </footer>
 </body>
+<script>
+    function search(search_text) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "{% url 'chat_list' %}", true);
+
+        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        const data = `search_text=${search_text}`;
+        xhr.send(data);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                location.reload();
+              } else {
+
+              }
+            }
+      };
+    }
+</script>
 </html>
 
