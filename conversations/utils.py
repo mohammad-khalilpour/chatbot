@@ -34,7 +34,7 @@ def open_ai_api_chat_completion(conversation_id, reproduce=False):
 
         req_messages.append({'role': role, 'content': message.message_context})
     if related_document is not None:
-        req_messages.append({"role": "system", "content": related_document})
+        req_messages.append({"role": "system", "content": f'use the data if needed: {related_document}'})
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=req_messages
