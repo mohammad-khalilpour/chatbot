@@ -21,7 +21,7 @@ def open_ai_api_chat_completion(conversation_id, reproduce=False):
                 {'role': 'user', 'content': messages[0].message_context}
             ]
         )
-        title = json.loads(title)
+        title = json.loads(title) if isinstance(title, str) else json.loads(title.model_dump_json())
         conversation.title = title['choices'][0]['message']['content']
         conversation.save()
     related_document = most_related_document(conversation_id, messages.last().message_context)
