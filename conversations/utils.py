@@ -33,7 +33,8 @@ def open_ai_api_chat_completion(conversation_id, reproduce=False):
             role = 'user'
 
         req_messages.append({'role': role, 'content': message.message_context})
-    req_messages.append({"role": "system", "content": f"if there is any data about the next question then answer based on ${related_document}"})
+    if related_document is not None:
+        req_messages.append({"role": "system", "content": related_document})
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=req_messages
@@ -55,5 +56,7 @@ def most_related_document(conversation_id, message):
     message_embedding = response['data'][0]['embedding']
     conversation = Conversation.objects.get(id=conversation_id)
     chatbot = conversation.chatbot
-    most_related_doc = Content.objects.filter(chatbot=chatbot).order_by(L2Distance('embedding', message_embedding))[0]
-    return most_related_doc.content
+    if Content.objects.count():
+        most_related_doc = Content.objects.filter(chatbot=chatbot).order_by(L2Distance('embedding', message_embedding))[0]
+        return most_related_doc.content
+    return None
