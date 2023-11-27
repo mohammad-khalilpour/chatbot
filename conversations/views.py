@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger
 from conversations.utils import open_ai_api_chat_completion
 from django.contrib.postgres.search import SearchQuery, SearchVector
+from django.shortcuts import reverse
 
 
 @login_required
@@ -14,15 +15,11 @@ def chat_list_view(request):
 
     queryset = Conversation.objects.filter(user=request.user)
 
-    search_text = request.session.get('search_text')
+    search_text = request.GET.get('search_text')
     if search_text:
         message_list = Message.objects.filter(conversation__user=request.user).annotate(
             search=SearchVector('message_context')).filter(search=SearchQuery(search_text))
         queryset = Conversation.objects.filter(messages__in=message_list).distinct()
-
-    if request.method == 'POST':
-        search_text = request.POST.get('search_text')
-        request.session['search_text'] = search_text
 
     paginator = Paginator(queryset, items_per_page)
     page = request.GET.get('page')

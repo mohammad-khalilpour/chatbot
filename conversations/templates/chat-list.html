@@ -62,23 +62,7 @@
 </body>
 <script>
     function search(search_text) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "{% url 'chat_list' %}", true);
-
-        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        const data = `search_text=${search_text}`;
-        xhr.send(data);
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 200) {
-                location.reload();
-              } else {
-
-              }
-            }
-      };
+        window.location.href = `{% url 'chat_list' %}?search_text=${search_text}`;
     }
 </script>
 </html>
