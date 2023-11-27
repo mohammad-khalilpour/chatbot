@@ -1,8 +1,8 @@
 from django.contrib import admin
 from chatbots.models import Chatbot, Content
 from django.contrib.auth import get_user_model
-from openai import OpenAI
-from django.conf import settings
+from conversations.utils import get_embedding
+
 import json
 
 User = get_user_model()
@@ -66,14 +66,7 @@ class ContentAdmin(admin.ModelAdmin):
         return form
 
     def save_model(self, request, obj, form, change):
-        client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
-        response = client.embeddings.create(
-            input=request.POST.get('content'),
-            model='text-embedding-ada-002',
-            encoding_format='float'
-        )
-        response = json.loads(response) if isinstance(response, str) else json.loads(response.model_dump_json())
-        obj.embedding = response['data'][0]['embedding']
+        obj.embedding = get_embedding(request.POST.get('content'))
         super().save_model(request, obj, form, change)
 
     def has_view_permission(self, request, obj=None):

@@ -45,18 +45,24 @@ def open_ai_api_chat_completion(conversation_id, reproduce=False):
     conversation.update_datetime_field_to_now()
 
 
-def most_related_document(conversation_id, message):
-    client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
-    response = client.embeddings.create(
-        input=message,
-        model='text-embedding-ada-002',
-        encoding_format='float'
-    )
-    response = json.loads(response) if isinstance(response, str) else json.loads(response.model_dump_json())
-    message_embedding = response['data'][0]['embedding']
+def most_related_document(conversation_id, message, message_embedding=None):
+    if message_embedding is None:
+        message_embedding = get_embedding(message)
     conversation = Conversation.objects.get(id=conversation_id)
     chatbot = conversation.chatbot
     if Content.objects.count():
         most_related_doc = Content.objects.filter(chatbot=chatbot).order_by(L2Distance('embedding', message_embedding))[0]
         return most_related_doc.content
     return None
+
+
+def get_embedding(doc):
+    client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
+    response = client.embeddings.create(
+        input=doc,
+        model='text-embedding-ada-002',
+        encoding_format='float'
+    )
+    response = json.loads(response) if isinstance(response, str) else json.loads(response.model_dump_json())
+    doc_embedding = response['data'][0]['embedding']
+    return doc_embedding
