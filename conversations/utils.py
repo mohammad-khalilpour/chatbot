@@ -8,7 +8,7 @@ from pgvector.django import L2Distance
 
 def open_ai_api_chat_completion(conversation_id, reproduce=False):
     conversation = Conversation.objects.get(id=conversation_id)
-    client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
+    client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url=settings.OPENAI_BASE_URL)
     if reproduce:
         Message.objects.filter(conversation=conversation).last().delete()
     messages = Message.objects.filter(conversation=conversation)
@@ -57,7 +57,7 @@ def most_related_document(conversation_id, message, message_embedding=None):
 
 
 def get_embedding(doc):
-    client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url='https://openai.torob.ir/v1')
+    client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url=settings.OPENAI_BASE_URL)
     response = client.embeddings.create(
         input=doc,
         model='text-embedding-ada-002',

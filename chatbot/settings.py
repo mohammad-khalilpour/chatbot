@@ -29,6 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", 'changeme')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=1))
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', '')
 
 ALLOWED_HOSTS = []
 ALLOWED_HOSTS.extend(
