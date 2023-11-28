@@ -26,8 +26,8 @@ def open_ai_api_chat_completion(conversation_id, reproduce=False):
         conversation.save()
     related_document = most_related_document(conversation_id, messages.last().message_context)
     req_messages = [{"role": "system", "content": conversation.chatbot.custom_prompt},
-
-                    {"role": "system", "content": 'if you dont know answer to the users question or there isnt any data provided about the question tell him you dont know'}]
+                    {"role": "system", "content": 'if you dont know answer to the users question or there isnt any data provided tell him you dont know.'
+                                                  ' If data is provided answer the question'}]
 
     if related_document is not None:
         req_messages.append({"role": "system", "content": f'Use the data for conversation if needed: {related_document}"'})
@@ -40,6 +40,8 @@ def open_ai_api_chat_completion(conversation_id, reproduce=False):
 
         req_messages.append({'role': role, 'content': message.message_context})
 
+    for i in req_messages:
+        print(i)
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=req_messages
